@@ -79,8 +79,6 @@ async def run_pipeline(response_id: str, db, ws_manager) -> dict:
         coding_results.append(cr)
 
     # ── 2. Validation ─────────────────────────────────────────────────────
-    survey = db.get(type("Survey", (), {"__tablename__": "surveys"}), response.survey_id)
-    # Use the actual Survey model
     from models import Survey
     survey = db.get(Survey, response.survey_id)
 
