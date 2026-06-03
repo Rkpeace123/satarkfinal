@@ -582,7 +582,3 @@ export default function ResponseDrilldown() {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function takeAction(_type: string) {
-  // placeholder used inside coding tab — actual takeAction is inside component
-}

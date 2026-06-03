@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, ExternalLink, Clock, Wifi, WifiOff, Tag } from 'lucide-react'
 import type { LiveFlag, ResponseSummary } from '../types'
@@ -63,17 +63,16 @@ function FeedItem({
   isLive?: boolean
 }) {
   const navigate = useNavigate()
-  const isFlag = 'validation_failures' in item
-
-  const responseId = 'response_id' in item ? item.response_id : item.id
-  const enumeratorName = 'enumerator_name' in item ? item.enumerator_name : item.enumerator_name
-  const confidenceScore = 'confidence_score' in item ? item.confidence_score : (item as LiveFlag).confidence_score
-  const fraudScore = 'fraud_score' in item ? item.fraud_score : (item as LiveFlag).fraud_score
-  const action = 'action' in item ? item.action : item.status
-  const timestamp = 'timestamp' in item ? item.timestamp : item.created_at
-  const trustScore = 'trust_score' in item ? item.trust_score : 75
-  const validationFailures = isFlag ? (item as LiveFlag).validation_failures : []
-  const codingResults = isFlag ? (item as LiveFlag).coding_results : []
+  const isLiveFlag = (i: LiveFlag | ResponseSummary): i is LiveFlag => 'response_id' in i
+  const responseId = isLiveFlag(item) ? item.response_id : item.id
+  const enumeratorName = item.enumerator_name
+  const confidenceScore = item.confidence_score
+  const fraudScore = item.fraud_score
+  const action = isLiveFlag(item) ? item.action : item.status
+  const timestamp = isLiveFlag(item) ? item.timestamp : item.created_at
+  const trustScore = isLiveFlag(item) ? item.trust_score : 75
+  const validationFailures = isLiveFlag(item) ? item.validation_failures : []
+  const codingResults = isLiveFlag(item) ? item.coding_results : []
 
   return (
     <div

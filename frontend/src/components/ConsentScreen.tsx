@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Shield, CheckCircle, X, Lock, FileText, Users } from 'lucide-react'
 
 interface ConsentScreenProps {

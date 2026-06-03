@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tag, CheckCircle, Edit3, AlertTriangle } from 'lucide-react'
 import type { CodingResult } from '../types'
 import clsx from 'clsx'

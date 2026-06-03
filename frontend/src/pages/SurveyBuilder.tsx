@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  Plus,
   Trash2,
   Save,
   Wand2,

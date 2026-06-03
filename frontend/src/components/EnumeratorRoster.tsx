@@ -1,4 +1,3 @@
-import React from 'react'
 import { TrendingDown, TrendingUp, Minus, ChevronRight, User } from 'lucide-react'
 import type { EnumeratorProfile } from '../types'
 import TrustBadge from './TrustBadge'
