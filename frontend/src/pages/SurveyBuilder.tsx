@@ -375,7 +375,7 @@ export default function SurveyBuilder() {
     setGenerateError(null)
     try {
       const survey = await api.generateSurvey(prompt, questionCount)
-      const built: BuilderQuestion[] = survey.question_graph.questions.map((q, i) => ({
+      const built: BuilderQuestion[] = survey?.questionGraph.questions.map((q, i) => ({
         ...q,
         _key: `gen-${Date.now()}-${i}`
       }))

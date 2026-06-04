@@ -36,7 +36,7 @@ export default function AutoCodeChip({ result, onConfirm, onEdit, loading }: Aut
           {isHighConf ? 'Auto-coded' : 'Needs review'}
         </div>
         <span className={clsx('font-bold text-sm', isHighConf ? 'text-green-300' : 'text-amber-300')}>
-          {result.suggested_code}
+          {result.suggestedCode ?? result.suggestedCode}
         </span>
         {loading && (
           <div className="ml-auto w-3 h-3 border border-slate-400 border-t-transparent rounded-full animate-spin" />
@@ -44,7 +44,7 @@ export default function AutoCodeChip({ result, onConfirm, onEdit, loading }: Aut
       </div>
 
       {/* Code label */}
-      <div className="text-slate-300 font-medium mb-1.5">{result.code_label}</div>
+      <div className="text-slate-300 font-medium mb-1.5">{result.codeLabel ?? result.codeLabel}</div>
 
       {/* Confidence bar */}
       <div className="mb-2">

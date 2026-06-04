@@ -84,7 +84,7 @@ export default function LandingPage() {
     setError(null)
     try {
       const statsData = await api.getStats()
-      navigate(`/survey/${statsData.sample_survey_id}`)
+      navigate(`/survey/${statsData.sampleSurveyId ?? statsData.sampleSurveyId}`)
     } catch (err) {
       setError('Could not connect to SATARK backend. Make sure the API server is running.')
       setLoading(false)

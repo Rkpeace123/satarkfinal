@@ -212,15 +212,15 @@ export default function ResponseDrilldown() {
                 <User size={16} className="text-blue-400 mt-0.5" />
                 <div>
                   <div className="text-slate-400 text-xs">Enumerator</div>
-                  <div className="text-slate-100 font-semibold text-sm">{response.enumerator_name}</div>
-                  <div className="text-slate-500 text-xs font-mono">{response.enumerator_id}</div>
+                  <div className="text-slate-100 font-semibold text-sm">{response.enumeratorName}</div>
+                  <div className="text-slate-500 text-xs font-mono">{response.enumeratorId}</div>
                 </div>
               </div>
               <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-start gap-3">
                 <Home size={16} className="text-green-400 mt-0.5" />
                 <div>
                   <div className="text-slate-400 text-xs">Household</div>
-                  <div className="text-slate-100 font-semibold text-sm font-mono">{response.household_id}</div>
+                  <div className="text-slate-100 font-semibold text-sm font-mono">{response.householdId}</div>
                   <div className="text-slate-500 text-xs">FSU Survey Unit</div>
                 </div>
               </div>
@@ -229,7 +229,7 @@ export default function ResponseDrilldown() {
                 <div>
                   <div className="text-slate-400 text-xs">Submitted</div>
                   <div className="text-slate-100 font-semibold text-sm">
-                    {new Date(response.created_at).toLocaleString('en-IN')}
+                    {new Date(response.createdAt).toLocaleString('en-IN')}
                   </div>
                   <div className="text-slate-500 text-xs">IST</div>
                 </div>
@@ -241,14 +241,14 @@ export default function ResponseDrilldown() {
               <h3 className="text-slate-200 font-semibold mb-4">Intelligence Scores</h3>
               <div className="flex items-center justify-around">
                 <ScoreCircle
-                  score={response.confidence_score}
+                  score={response.confidenceScore}
                   label="Confidence"
-                  color={response.confidence_score >= 0.8 ? 'stroke-green-500 text-green-400' : response.confidence_score >= 0.5 ? 'stroke-amber-500 text-amber-400' : 'stroke-red-500 text-red-400'}
+                  color={response.confidenceScore >= 0.8 ? 'stroke-green-500 text-green-400' : response.confidenceScore >= 0.5 ? 'stroke-amber-500 text-amber-400' : 'stroke-red-500 text-red-400'}
                 />
                 <ScoreCircle
-                  score={response.fraud_score}
+                  score={response.fraudScore}
                   label="Fraud Risk"
-                  color={response.fraud_score >= 0.6 ? 'stroke-red-500 text-red-400' : response.fraud_score >= 0.3 ? 'stroke-amber-500 text-amber-400' : 'stroke-green-500 text-green-400'}
+                  color={response.fraudScore >= 0.6 ? 'stroke-red-500 text-red-400' : response.fraudScore >= 0.3 ? 'stroke-amber-500 text-amber-400' : 'stroke-green-500 text-green-400'}
                 />
                 <div className="flex flex-col items-center gap-1">
                   <TrustBadge score={75} size="lg" showLabel />
@@ -260,11 +260,11 @@ export default function ResponseDrilldown() {
               </div>
 
               {/* Confidence breakdown bars */}
-              {response.confidence_breakdown && Object.keys(response.confidence_breakdown).length > 0 && (
+              {response.confidenceBreakdown && Object.keys(response.confidenceBreakdown).length > 0 && (
                 <div className="mt-5 pt-4 border-t border-slate-700">
                   <div className="text-slate-400 text-xs font-medium mb-3">Confidence Breakdown</div>
                   <div className="space-y-2">
-                    {Object.entries(response.confidence_breakdown).map(([key, val]) => (
+                    {Object.entries(response.confidenceBreakdown).map(([key, val]) => (
                       <div key={key} className="flex items-center gap-3 text-xs">
                         <span className="text-slate-400 w-28 capitalize">{key.replace(/_/g, ' ')}</span>
                         <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -286,7 +286,7 @@ export default function ResponseDrilldown() {
               <h3 className="text-slate-200 font-semibold mb-4">Survey Answers</h3>
               <div className="space-y-1">
                 {Object.entries(response.answers).map(([qId, ans]) => {
-                  const codingForQ = response.coding_results?.find((c) => c.question_id === qId)
+                  const codingForQ = response.codingResults?.find((c) => c.questionId === qId)
                   return (
                     <div key={qId} className="flex items-start gap-3 py-2 border-b border-slate-700/50 last:border-0 text-sm">
                       <span className="text-slate-500 font-mono text-xs w-28 flex-shrink-0 mt-0.5">{qId}</span>
@@ -296,8 +296,8 @@ export default function ResponseDrilldown() {
                       {codingForQ && (
                         <div className="flex items-center gap-1.5 text-xs flex-shrink-0">
                           <ChevronRight size={12} className="text-slate-600" />
-                          <span className="text-purple-400 font-mono font-bold">{codingForQ.suggested_code}</span>
-                          <span className="text-slate-400">{codingForQ.code_label}</span>
+                          <span className="text-purple-400 font-mono font-bold">{codingForQ.suggestedCode}</span>
+                          <span className="text-slate-400">{codingForQ.codeLabel}</span>
                         </div>
                       )}
                     </div>
@@ -315,9 +315,9 @@ export default function ResponseDrilldown() {
             <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
               <h3 className="text-slate-200 font-semibold mb-4 flex items-center gap-2">
                 <Shield size={16} className="text-amber-400" />
-                Validation Results ({response.validation_results?.length ?? 0})
+                Validation Results ({response.validationResults?.length ?? 0})
               </h3>
-              {response.validation_results && response.validation_results.length > 0 ? (
+              {response.validationResults && response.validationResults.length > 0 ? (
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="text-slate-500 border-b border-slate-700">
@@ -330,12 +330,12 @@ export default function ResponseDrilldown() {
                     </tr>
                   </thead>
                   <tbody>
-                    {response.validation_results.map((v, i) => (
+                    {response.validationResults.map((v, i) => (
                       <tr key={i} className="border-b border-slate-800 hover:bg-slate-900/30">
                         <td className="py-2 pr-3">
                           <span className="px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 font-mono">L{v.layer}</span>
                         </td>
-                        <td className="py-2 pr-3 font-mono text-slate-400">{v.question_id}</td>
+                        <td className="py-2 pr-3 font-mono text-slate-400">{v.questionId}</td>
                         <td className="py-2 pr-3">
                           {v.status === 'pass' ? (
                             <CheckCircle size={13} className="text-green-400" />
@@ -368,11 +368,11 @@ export default function ResponseDrilldown() {
             <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
               <h3 className="text-slate-200 font-semibold mb-4 flex items-center gap-2">
                 <AlertTriangle size={16} className="text-red-400" />
-                Fraud Signals ({response.fraud_signals?.length ?? 0})
+                Fraud Signals ({response.fraudSignals?.length ?? 0})
               </h3>
-              {response.fraud_signals && response.fraud_signals.length > 0 ? (
+              {response.fraudSignals && response.fraudSignals.length > 0 ? (
                 <div className="space-y-2">
-                  {response.fraud_signals.map((sig, i) => (
+                  {response.fraudSignals.map((sig, i) => (
                     <div
                       key={i}
                       className={clsx(
@@ -388,7 +388,7 @@ export default function ResponseDrilldown() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-slate-200 font-semibold capitalize">
-                            {sig.signal_type.replace(/_/g, ' ')}
+                            {sig.signalType.replace(/_/g, ' ')}
                           </span>
                           {sig.triggered && (
                             <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 font-bold">TRIGGERED</span>
@@ -426,9 +426,9 @@ export default function ResponseDrilldown() {
               <Tag size={16} className="text-purple-400" />
               Coding Results
             </h3>
-            {response.coding_results && response.coding_results.length > 0 ? (
+            {response.codingResults && response.codingResults.length > 0 ? (
               <div className="space-y-3">
-                {response.coding_results.map((cr, i) => (
+                {response.codingResults.map((cr, i) => (
                   <div
                     key={i}
                     className={clsx(
@@ -443,7 +443,7 @@ export default function ResponseDrilldown() {
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <span className="text-slate-500">Raw text: </span>
-                        <span className="text-slate-200 font-medium">"{cr.raw_text}"</span>
+                        <span className="text-slate-200 font-medium">"{cr.rawText}"</span>
                       </div>
                       <span
                         className={clsx(
@@ -464,8 +464,8 @@ export default function ResponseDrilldown() {
                       </div>
                       <ChevronRight size={12} className="text-slate-600" />
                       <div>
-                        <span className="font-mono font-bold text-purple-400 text-sm">{cr.suggested_code}</span>
-                        <span className="text-slate-300 ml-2">{cr.code_label}</span>
+                        <span className="font-mono font-bold text-purple-400 text-sm">{cr.suggestedCode}</span>
+                        <span className="text-slate-300 ml-2">{cr.codeLabel}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 mb-2">

@@ -65,11 +65,11 @@ function FeedItem({
   const navigate = useNavigate()
   const isLiveFlag = (i: LiveFlag | ResponseSummary): i is LiveFlag => 'response_id' in i
   const responseId = isLiveFlag(item) ? item.response_id : item.id
-  const enumeratorName = item.enumerator_name
-  const confidenceScore = item.confidence_score
-  const fraudScore = item.fraud_score
+  const enumeratorName = isLiveFlag(item) ? item.enumerator_name : (item as ResponseSummary).enumeratorName
+  const confidenceScore = isLiveFlag(item) ? item.confidence_score : (item as ResponseSummary).confidenceScore
+  const fraudScore = isLiveFlag(item) ? item.fraud_score : (item as ResponseSummary).fraudScore
   const action = isLiveFlag(item) ? item.action : item.status
-  const timestamp = isLiveFlag(item) ? item.timestamp : item.created_at
+  const timestamp = isLiveFlag(item) ? item.timestamp : item.createdAt
   const trustScore = isLiveFlag(item) ? item.trust_score : 75
   const validationFailures = isLiveFlag(item) ? item.validation_failures : []
   const codingResults = isLiveFlag(item) ? item.coding_results : []

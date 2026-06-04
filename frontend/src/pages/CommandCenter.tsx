@@ -64,8 +64,8 @@ export default function CommandCenter() {
   }, [])
 
   const flaggedPct = stats
-    ? stats.total_responses > 0
-      ? Math.round((stats.flagged_count / stats.total_responses) * 100)
+    ? stats.totalResponses > 0
+      ? Math.round((stats.flaggedCount / stats.totalResponses) * 100)
       : 0
     : 0
 
@@ -101,9 +101,9 @@ export default function CommandCenter() {
             >
               <Code size={12} />
               Coding Review
-              {stats?.pending_coding_review ? (
+              {stats?.pendingCodingReview ? (
                 <span className="px-1.5 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold">
-                  {stats.pending_coding_review}
+                  {stats.pendingCodingReview}
                 </span>
               ) : null}
             </button>
@@ -122,7 +122,7 @@ export default function CommandCenter() {
             <>
               <StatCard
                 label="Total Responses"
-                value={stats?.total_responses ?? 0}
+                value={stats?.totalResponses ?? 0}
                 icon={<BarChart2 size={16} />}
                 color="text-blue-400"
               />
@@ -130,28 +130,28 @@ export default function CommandCenter() {
                 label="Flagged"
                 value={`${flaggedPct}%`}
                 icon={<AlertTriangle size={16} />}
-                sub={`${stats?.flagged_count ?? 0} responses`}
+                sub={`${stats?.flaggedCount ?? 0} responses`}
                 color={flaggedPct > 15 ? 'text-red-400' : 'text-amber-400'}
               />
               <StatCard
                 label="Avg Confidence"
-                value={stats ? `${Math.round(stats.avg_confidence * 100)}%` : '—'}
+                value={stats ? `${Math.round(stats.avgConfidenceScore * 100)}%` : '—'}
                 icon={<CheckCircle size={16} />}
                 color="text-green-400"
               />
               <StatCard
                 label="Avg Trust Score"
-                value={stats ? Math.round(stats.avg_trust) : '—'}
+                value={stats ? Math.round(stats.avgTrustScore) : '—'}
                 icon={
-                  stats && stats.avg_trust < 70
+                  stats && stats.avgTrustScore < 70
                     ? <TrendingDown size={16} />
                     : <TrendingUp size={16} />
                 }
-                color={stats && stats.avg_trust < 60 ? 'text-red-400' : stats && stats.avg_trust < 75 ? 'text-amber-400' : 'text-green-400'}
+                color={stats && stats.avgTrustScore < 60 ? 'text-red-400' : stats && stats.avgTrustScore < 75 ? 'text-amber-400' : 'text-green-400'}
               />
               <StatCard
                 label="Active Enumerators"
-                value={stats?.enumerator_count ?? 0}
+                value={stats?.enumeratorCount ?? 0}
                 icon={<Users size={16} />}
                 color="text-purple-400"
               />
@@ -286,8 +286,8 @@ function AllResponsesPanel() {
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-700/50 hover:border-slate-600 cursor-pointer transition-all text-xs"
           >
             <span className="font-mono text-slate-500 text-xs truncate w-28">{r.id.slice(0, 12)}…</span>
-            <span className="text-slate-400 truncate flex-1">{r.enumerator_name}</span>
-            <span className="text-slate-500 font-mono">{r.household_id}</span>
+            <span className="text-slate-400 truncate flex-1">{r.enumeratorName}</span>
+            <span className="text-slate-500 font-mono">{r.householdId}</span>
             <span className={clsx(
               'px-2 py-0.5 rounded font-bold uppercase',
               r.status === 'approve' ? 'bg-green-500/10 text-green-400' :
@@ -296,7 +296,7 @@ function AllResponsesPanel() {
             )}>
               {r.status}
             </span>
-            <span className="text-slate-400">{Math.round(r.confidence_score * 100)}%</span>
+            <span className="text-slate-400">{Math.round(r.confidenceScore * 100)}%</span>
           </div>
         ))}
       </div>
@@ -306,7 +306,7 @@ function AllResponsesPanel() {
 
 function EnumeratorQuickView({ enumerator }: { enumerator: EnumeratorProfile }) {
   if (!enumerator) return null
-  const isAtRisk = enumerator.trust_score < 60
+  const isAtRisk = enumerator.trustScore ?? enumerator.trustScore < 60
   return (
     <div className={clsx(
       'mt-3 p-3 rounded-xl border text-xs flex-shrink-0',
@@ -315,10 +315,10 @@ function EnumeratorQuickView({ enumerator }: { enumerator: EnumeratorProfile }) 
       <div className="flex items-center justify-between mb-2">
         <span className="text-slate-200 font-semibold">{enumerator.name}</span>
         <span className={clsx('font-bold', isAtRisk ? 'text-red-400' : 'text-green-400')}>
-          Trust: {enumerator.trust_score}
+          Trust: {enumerator.trustScore ?? enumerator.trustScore}
         </span>
       </div>
-      <div className="text-slate-500">{enumerator.fsu_id} · {enumerator.phone}</div>
+      <div className="text-slate-500">{enumerator.fsuId ?? enumerator.fsuId} · {enumerator.phone}</div>
     </div>
   )
 }

@@ -2,9 +2,9 @@ export interface Survey {
   id: string
   title: string
   description: string
-  language_codes: string[]
-  question_graph: QuestionGraph
-  created_at: string
+  languageCodes: string[]
+  questionGraph: QuestionGraph
+  createdAt: string
 }
 
 export interface QuestionGraph {
@@ -34,8 +34,8 @@ export interface Edge {
 }
 
 export interface CodingResult {
-  suggested_code: string
-  code_label: string
+  suggestedCode: string
+  codeLabel: string
   confidence: number
   reason: string
   alternatives: Array<{ code: string; label: string; confidence: number }>
@@ -49,7 +49,7 @@ export interface ValidationFailure {
 }
 
 export interface FraudSignal {
-  signal_type: string
+  signalType: string
   value: number
   threshold: number
   triggered: boolean
@@ -61,56 +61,57 @@ export interface EnumeratorProfile {
   id: string
   name: string
   phone: string
-  fsu_id: string
-  trust_score: number
+  fsuId: string
+  trustScore: number
   status: string
-  created_at: string
+  responseCount?: number
+  createdAt: string
 }
 
 export interface TrustHistoryPoint {
-  trust_score: number
+  trustScore: number
   delta: number
   reason: string
-  created_at: string
+  createdAt: string
 }
 
 export interface ResponseSummary {
   id: string
-  survey_id: string
-  enumerator_id: string
-  enumerator_name: string
-  household_id: string
+  surveyId: string
+  enumeratorId: string
+  enumeratorName?: string
+  householdId: string
   status: string
-  confidence_score: number
-  fraud_score: number
-  created_at: string
+  confidenceScore: number
+  fraudScore: number
+  action: string
+  createdAt: string
 }
 
 export interface ResponseDetail extends ResponseSummary {
   answers: Record<string, unknown>
   paradata: Record<string, unknown>
-  validation_results: Array<{
+  validationResults: Array<{
     layer: number
-    question_id: string
+    questionId: string
     status: string
     severity: string
     reason: string
     score: number
   }>
-  fraud_signals: FraudSignal[]
-  coding_results: Array<{
-    question_id: string
-    raw_text: string
+  fraudSignals: FraudSignal[]
+  codingResults: Array<{
+    questionId: string
+    rawText: string
     system: string
-    suggested_code: string
-    code_label: string
+    suggestedCode: string
+    codeLabel: string
     confidence: number
     reason: string
     alternatives: unknown[]
     status: string
   }>
-  confidence_breakdown: Record<string, number>
-  action: string
+  confidenceBreakdown: Record<string, number>
 }
 
 export interface LiveFlag {
@@ -134,11 +135,11 @@ export interface LiveFlag {
 }
 
 export interface Stats {
-  total_responses: number
-  flagged_count: number
-  avg_confidence: number
-  avg_trust: number
-  enumerator_count: number
-  sample_survey_id: string
-  pending_coding_review: number
+  totalResponses: number
+  flaggedCount: number
+  avgConfidenceScore: number
+  avgTrustScore: number
+  enumeratorCount: number
+  sampleSurveyId: string
+  pendingCodingReview?: number
 }

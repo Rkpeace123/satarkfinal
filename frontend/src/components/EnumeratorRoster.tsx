@@ -17,7 +17,7 @@ function DeltaIcon({ delta }: { delta?: number }) {
 }
 
 export default function EnumeratorRoster({ enumerators, onSelect, selectedId }: EnumeratorRosterProps) {
-  const sorted = [...enumerators].sort((a, b) => a.trust_score - b.trust_score)
+  const sorted = [...enumerators].sort((a, b) => a.trustScore - b.trustScore)
 
   if (sorted.length === 0) {
     return (
@@ -32,8 +32,8 @@ export default function EnumeratorRoster({ enumerators, onSelect, selectedId }: 
     <div className="space-y-1.5">
       {sorted.map((enumerator) => {
         const isSelected = enumerator.id === selectedId
-        const isAtRisk = enumerator.trust_score < 60
-        const isWatching = enumerator.trust_score >= 60 && enumerator.trust_score < 80
+        const isAtRisk = enumerator.trustScore ?? enumerator.trustScore < 60
+        const isWatching = enumerator.trustScore ?? enumerator.trustScore >= 60 && enumerator.trustScore ?? enumerator.trustScore < 80
 
         return (
           <div
@@ -48,7 +48,7 @@ export default function EnumeratorRoster({ enumerators, onSelect, selectedId }: 
             )}
           >
             {/* Trust badge */}
-            <TrustBadge score={enumerator.trust_score} size="sm" />
+            <TrustBadge score={enumerator.trustScore ?? enumerator.trustScore} size="sm" />
 
             {/* Info */}
             <div className="flex-1 min-w-0">
@@ -66,7 +66,7 @@ export default function EnumeratorRoster({ enumerators, onSelect, selectedId }: 
                 )}
               </div>
               <div className="flex items-center gap-3 mt-0.5">
-                <span className="text-slate-500 text-xs font-mono">{enumerator.fsu_id}</span>
+                <span className="text-slate-500 text-xs font-mono">{enumerator.fsuId ?? enumerator.fsuId}</span>
                 <span className="text-slate-600 text-xs">·</span>
                 <span className={clsx(
                   'text-xs capitalize',

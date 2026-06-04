@@ -165,7 +165,7 @@ export default function SurveyChat() {
 
   useEffect(() => {
     if (!consentGiven || !survey || messages.length > 0) return
-    const questions = survey.question_graph.questions
+    const questions = survey.questionGraph?.questions ?? []
     if (questions.length === 0) return
     const firstQ = questions[0]
     setMessages([
@@ -194,7 +194,7 @@ export default function SurveyChat() {
 
   // ── Get current question ─────────────────────────────────────────────────
 
-  const questions = survey?.question_graph.questions ?? []
+  const questions = survey?.questionGraph?.questions ?? []
   const currentQuestion = questions[currentQuestionIdx] ?? null
 
   // ── Auto-coding debounce ─────────────────────────────────────────────────
@@ -276,7 +276,7 @@ export default function SurveyChat() {
       // Save answer (with code if confirmed)
       const answerValue =
         currentQuestion.code_binding && codingResult && codeConfirmed
-          ? { raw: value, code: codingResult.suggested_code, label: codingResult.code_label }
+          ? { raw: value, code: codingResult.suggestedCode ?? codingResult.suggestedCode, label: codingResult.codeLabel ?? codingResult.codeLabel }
           : value
 
       const newAnswers = { ...answers, [currentQuestion.id]: answerValue }
@@ -388,11 +388,13 @@ export default function SurveyChat() {
 
   // ── Result screen ────────────────────────────────────────────────────────
 
-  const resultData = pipelineResult as {
+  type ResultData = {
     confidence_score?: number
+    confidenceScore?: number
     action?: string
-    coding_results?: Array<{ raw_text?: string; suggested_code?: string; code_label?: string; confidence?: number }>
-  } | null
+    coding_results?: Array<{ raw_text?: string; raw?: string; suggested_code?: string; code?: string; code_label?: string; label?: string; confidence?: number }>
+  }
+  const resultData = pipelineResult as ResultData | null
 
   // ─────────────────────────────────────────────────────────────────────────
   // Loading / error states
@@ -534,20 +536,21 @@ export default function SurveyChat() {
                   <div>
                     <div className="text-slate-400 text-xs mb-1">Confidence Score</div>
                     <div className="text-3xl font-bold text-blue-400">
-                      {resultData.confidence_score !== undefined
-                        ? `${Math.round(resultData.confidence_score * 100)}%`
-                        : '—'}
+                      {(() => {
+                        const sc = resultData.confidenceScore ?? resultData.confidenceScore
+                        return sc !== undefined ? `${Math.round(sc)}%` : '—'
+                      })()}
                     </div>
                   </div>
                   {resultData.action && <ActionResult action={resultData.action} />}
                 </div>
 
                 {/* Confidence bar */}
-                {resultData.confidence_score !== undefined && (
+                {(resultData.confidenceScore ?? resultData.confidenceScore) !== undefined && (
                   <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-blue-500 rounded-full"
-                      style={{ width: `${Math.round(resultData.confidence_score * 100)}%` }}
+                      style={{ width: `${Math.round(resultData.confidenceScore ?? resultData.confidenceScore ?? 0)}%` }}
                     />
                   </div>
                 )}
@@ -557,12 +560,12 @@ export default function SurveyChat() {
                   <div>
                     <div className="text-slate-400 text-xs font-medium mb-2">Auto-coded Fields</div>
                     <div className="space-y-2">
-                      {resultData.coding_results.map((cr, i) => (
+                      {resultData.coding_results!.map((cr, i) => (
                         <div key={i} className="flex items-center gap-3 p-2 bg-slate-900/60 rounded-lg text-xs">
-                          <span className="text-slate-400 truncate flex-1">{cr.raw_text}</span>
+                          <span className="text-slate-400 truncate flex-1">{cr.raw_text ?? cr.raw}</span>
                           <ChevronRight size={12} className="text-slate-600 flex-shrink-0" />
-                          <span className="font-mono text-purple-400 flex-shrink-0">{cr.suggested_code}</span>
-                          <span className="text-slate-300 flex-shrink-0 truncate max-w-[120px]">{cr.code_label}</span>
+                          <span className="font-mono text-purple-400 flex-shrink-0">{cr.suggested_code ?? cr.code}</span>
+                          <span className="text-slate-300 flex-shrink-0 truncate max-w-[120px]">{cr.code_label ?? cr.label}</span>
                           <span className="text-slate-500 flex-shrink-0">
                             {cr.confidence !== undefined ? `${Math.round(cr.confidence * 100)}%` : ''}
                           </span>
@@ -760,7 +763,7 @@ export default function SurveyChat() {
                   {codeConfirmed && codingResult && (
                     <div className="mt-1.5 flex items-center gap-1.5 text-xs text-green-400">
                       <CheckCircle size={11} />
-                      Code confirmed: {codingResult.suggested_code} — {codingResult.code_label}
+                      Code confirmed: {codingResult.suggestedCode ?? codingResult.suggestedCode} — {codingResult.codeLabel ?? codingResult.codeLabel}
                     </div>
                   )}
                 </div>

@@ -233,15 +233,15 @@ export default function CodingReview() {
       for (const resp of responses.slice(0, 8)) {
         try {
           const detail: ResponseDetail = await api.getResponse(resp.id)
-          if (detail.coding_results) {
-            for (const cr of detail.coding_results) {
+          if (detail.codingResults) {
+            for (const cr of detail.codingResults) {
               allItems.push({
                 responseId: resp.id,
-                questionId: cr.question_id,
-                rawText: cr.raw_text,
+                questionId: cr.questionId,
+                rawText: cr.rawText,
                 system: cr.system,
-                suggestedCode: cr.suggested_code,
-                codeLabel: cr.code_label,
+                suggestedCode: cr.suggestedCode,
+                codeLabel: cr.codeLabel,
                 confidence: cr.confidence,
                 reason: cr.reason,
                 alternatives: cr.alternatives,
