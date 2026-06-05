@@ -1,7 +1,7 @@
 import json
 from uuid import uuid4
 from datetime import datetime
-from sqlalchemy import Column, String, Float, Boolean, Integer, Text, TypeDecorator
+from sqlalchemy import Column, String, Float, Boolean, Integer, Text, DateTime, TypeDecorator
 from database import Base
 
 
@@ -22,6 +22,16 @@ class JSONType(TypeDecorator):
             return json.loads(value)
         except (json.JSONDecodeError, TypeError):
             return value
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(String, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    role = Column(String, nullable=False)  # admin | enumerator | supervisor | policy
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 class Survey(Base):

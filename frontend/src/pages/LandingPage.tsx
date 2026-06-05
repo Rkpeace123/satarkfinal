@@ -10,9 +10,11 @@ import {
   Activity,
   FileText,
   Database,
-  Zap
+  Zap,
+  LogOut
 } from 'lucide-react'
 import { api } from '../api/client'
+import { getUser, clearAuth } from '../api/auth'
 
 interface CapabilityCard {
   icon: React.ReactNode
@@ -78,6 +80,7 @@ export default function LandingPage() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const user = getUser()
 
   const handleStartSurvey = async () => {
     setLoading(true)

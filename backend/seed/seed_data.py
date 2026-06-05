@@ -16,6 +16,7 @@ from models import (
     CodingResult,
     ConfidenceScore,
     TrustHistory,
+    User,
 )
 
 
@@ -500,6 +501,23 @@ def _get_ind_code(industry):
 def seed_database():
     db = SessionLocal()
     try:
+        # ── Seed demo users ────────────────────────────────────────────────
+        import hashlib
+        def hash_pw(p): return hashlib.sha256(p.encode()).hexdigest()
+
+        if db.query(User).count() == 0:
+            demo_users = [
+                User(id="user-admin-001", username="admin", password_hash=hash_pw("admin123"), name="Admin User", role="admin", created_at=datetime.utcnow()),
+                User(id="user-enum-001", username="lakshmi", password_hash=hash_pw("field123"), name="Lakshmi R", role="enumerator", created_at=datetime.utcnow()),
+                User(id="user-enum-002", username="suspect", password_hash=hash_pw("field123"), name="Suspect B", role="enumerator", created_at=datetime.utcnow()),
+                User(id="user-sup-001", username="supervisor", password_hash=hash_pw("super123"), name="Supervisor Kumar", role="supervisor", created_at=datetime.utcnow()),
+                User(id="user-pol-001", username="policy", password_hash=hash_pw("policy123"), name="Policy Analyst", role="policy", created_at=datetime.utcnow()),
+            ]
+            for u in demo_users:
+                db.add(u)
+            db.commit()
+            print("[seed] 5 demo users added")
+
         # ── Idempotency check ──────────────────────────────────────────────
         existing_codes = db.query(ClassificationCode).count()
         if existing_codes > 0:

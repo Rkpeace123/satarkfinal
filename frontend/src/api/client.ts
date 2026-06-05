@@ -11,8 +11,13 @@ import type {
 const BASE = '/api'
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = localStorage.getItem('satark_token')
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options?.headers
+    },
     ...options
   })
   if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`)

@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react'
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
 import { BarChart2, ClipboardList, Settings, Activity } from 'lucide-react'
 import clsx from 'clsx'
+import { getUser } from './api/auth'
 
 const LandingPage = React.lazy(() => import('./pages/LandingPage'))
 const SurveyChat = React.lazy(() => import('./pages/SurveyChat'))
@@ -9,12 +10,15 @@ const SurveyBuilder = React.lazy(() => import('./pages/SurveyBuilder'))
 const CommandCenter = React.lazy(() => import('./pages/CommandCenter'))
 const ResponseDrilldown = React.lazy(() => import('./pages/ResponseDrilldown'))
 const CodingReview = React.lazy(() => import('./pages/CodingReview'))
+const LoginPage = React.lazy(() => import('./pages/LoginPage'))
+const PolicyAnalytics = React.lazy(() => import('./pages/PolicyAnalytics'))
+const AssignmentList = React.lazy(() => import('./pages/AssignmentList'))
 
 function NavBar() {
   const location = useLocation()
-  const isLanding = location.pathname === '/'
+  const hideNav = ['/', '/login', '/policy', '/assignments'].includes(location.pathname)
 
-  if (isLanding) return null
+  if (hideNav) return null
 
   const links = [
     { to: '/', label: 'Survey', icon: <ClipboardList size={16} /> },
@@ -111,13 +115,25 @@ class ErrorBoundaryClass extends React.Component<
   }
 }
 
+function RootRedirect() {
+  const user = getUser()
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role === 'enumerator') return <Navigate to="/assignments" replace />
+  if (user.role === 'supervisor') return <Navigate to="/supervisor" replace />
+  if (user.role === 'policy') return <Navigate to="/policy" replace />
+  return <Navigate to="/builder" replace />
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
       <NavBar />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/policy" element={<PolicyAnalytics />} />
+          <Route path="/assignments" element={<AssignmentList />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/survey/:id" element={<SurveyChat />} />
           <Route path="/builder" element={<SurveyBuilder />} />
           <Route path="/supervisor" element={<CommandCenter />} />

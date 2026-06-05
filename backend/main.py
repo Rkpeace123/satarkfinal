@@ -10,6 +10,10 @@ from models import (
     FraudSignal,
 )
 from routers import surveys, responses, enumerators, coding, prepopulate, consent, actions, websocket_router
+from routers.auth import router as auth_router
+from routers.export import router as export_router
+from routers.analytics import router as analytics_router
+from models import User  # ensure User is imported for table creation
 from seed.seed_data import seed_database
 
 app = FastAPI(title="SATARK API", version="2.0", description="Statistical Analysis, Trust and Automation for Response Knowledge")
@@ -31,6 +35,9 @@ app.include_router(prepopulate.router, prefix="/api", tags=["prepopulate"])
 app.include_router(consent.router, prefix="/api", tags=["consent"])
 app.include_router(actions.router, prefix="/api", tags=["actions"])
 app.include_router(websocket_router.router, tags=["websocket"])
+app.include_router(auth_router, prefix="/api", tags=["auth"])
+app.include_router(export_router, prefix="/api", tags=["export"])
+app.include_router(analytics_router, prefix="/api", tags=["analytics"])
 
 
 # ── Startup ───────────────────────────────────────────────────────────────────

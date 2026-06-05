@@ -1,112 +1,146 @@
-import React, { useState } from 'react';
-import { api } from '../api';
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Shield, LogIn, Eye, EyeOff } from 'lucide-react'
+import { login } from '../api/auth'
 
-interface LoginPageProps {
-  onLogin: (token: string, role: string) => void;
-}
+const DEMO_CREDS = [
+  { username: 'admin',      password: 'admin123',  role: 'Administrator',   color: 'text-purple-400' },
+  { username: 'lakshmi',    password: 'field123',  role: 'Enumerator',      color: 'text-green-400' },
+  { username: 'suspect',    password: 'field123',  role: 'Enumerator (B)',  color: 'text-amber-400' },
+  { username: 'supervisor', password: 'super123',  role: 'Supervisor',      color: 'text-blue-400' },
+  { username: 'policy',     password: 'policy123', role: 'Policy Analyst',  color: 'text-cyan-400' },
+]
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [email, setEmail] = useState('admin@satark.gov');
-  const [password, setPassword] = useState('admin123');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+export default function LoginPage() {
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPw, setShowPw] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
+  async function handleLogin(u?: string, p?: string) {
+    const user = u || username
+    const pass = p || password
+    if (!user || !pass) return
+    setLoading(true)
+    setError('')
     try {
-      const { token, user_id } = await api.login(email, password);
-      
-      // Determine role based on email (demo)
-      let role = 'admin';
-      if (email.includes('lakshmi')) role = 'enumerator';
-      if (email.includes('suspect')) role = 'enumerator';
-      if (email.includes('supervisor')) role = 'supervisor';
-      if (email.includes('policy')) role = 'policy_maker';
-
-      localStorage.setItem('satark_token', token);
-      localStorage.setItem('satark_role', role);
-      localStorage.setItem('satark_user_id', user_id);
-      
-      onLogin(token, role);
-    } catch (err) {
-      setError('Invalid email or password');
+      const authUser = await login(user, pass)
+      // Route by role
+      if (authUser.role === 'enumerator') navigate('/assignments')
+      else if (authUser.role === 'supervisor') navigate('/supervisor')
+      else if (authUser.role === 'policy') navigate('/policy')
+      else navigate('/builder')
+    } catch {
+      setError('Invalid credentials. Use the demo accounts below.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-satark-navy to-satark-bg flex items-center justify-center">
-      <div className="w-full max-w-md p-8 bg-satark-card border border-satark-border rounded-lg shadow-xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-satark-saffron mb-2">SATARK</h1>
-          <p className="text-satark-textAlt text-sm">
-            Government of India · Ministry of Statistics & Programme Implementation
-          </p>
-          <p className="text-satark-textAlt text-xs mt-2">
-            "Every number can tell you why"
-          </p>
+    <div className="min-h-screen bg-[#001a4d] flex flex-col">
+      {/* GoI Header */}
+      <header className="bg-[#002366] border-b-4 border-[#FF9933]">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-4">
+          {/* Ashoka Chakra placeholder */}
+          <div className="w-10 h-10 rounded-full border-2 border-[#FF9933] flex items-center justify-center">
+            <span className="text-[#FF9933] text-lg font-bold">☸</span>
+          </div>
+          <div>
+            <div className="text-white font-bold text-sm tracking-wide">Government of India · Ministry of Statistics &amp; Programme Implementation</div>
+            <div className="text-[#FF9933] text-xs tracking-widest">MOSPI · NATIONAL STATISTICAL OFFICE</div>
+          </div>
         </div>
+      </header>
 
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-satark-textAlt text-sm mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-satark-bg border border-satark-border rounded text-satark-text placeholder-satark-textAlt focus:outline-none focus:border-satark-saffron"
-              placeholder="admin@satark.gov"
-            />
-          </div>
-
-          <div>
-            <label className="block text-satark-textAlt text-sm mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-satark-bg border border-satark-border rounded text-satark-text placeholder-satark-textAlt focus:outline-none focus:border-satark-saffron"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error && (
-            <div className="p-3 bg-red-900 bg-opacity-30 border border-red-700 rounded text-red-200 text-sm">
-              {error}
+      {/* Main */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#FF9933]/10 border border-[#FF9933]/30 mb-4">
+              <Shield size={32} className="text-[#FF9933]" />
             </div>
-          )}
+            <h1 className="text-3xl font-bold text-white tracking-tight">SATARK</h1>
+            <p className="text-blue-200/70 text-sm mt-1">Survey Analysis, Trust &amp; Automation for Response Knowledge</p>
+          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 bg-satark-saffron text-satark-navy font-semibold rounded hover:bg-yellow-400 disabled:opacity-50 transition"
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
+          {/* Login form */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+            <h2 className="text-white font-semibold mb-5 text-center">Secure Sign In</h2>
 
-        {/* Demo users */}
-        <div className="mt-8 p-4 bg-satark-bg border border-satark-border rounded text-xs text-satark-textAlt">
-          <p className="font-semibold mb-2">Demo Users:</p>
-          <div className="space-y-1">
-            <p>👤 Admin: admin@satark.gov / admin123</p>
-            <p>📱 Enumerator (Good): lakshmi@satark.gov / field123</p>
-            <p>⚠️ Enumerator (Suspect): suspect@satark.gov / field123</p>
-            <p>👔 Supervisor: supervisor@satark.gov / super123</p>
-            <p>📊 Policy Maker: policy@satark.gov / policy123</p>
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg p-3 mb-4">{error}</div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-blue-200/70 text-xs mb-1.5 block">Username</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-white/30 focus:outline-none focus:border-[#FF9933]/60 text-sm"
+                  onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                />
+              </div>
+              <div>
+                <label className="text-blue-200/70 text-xs mb-1.5 block">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPw ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-white/30 focus:outline-none focus:border-[#FF9933]/60 text-sm pr-10"
+                    onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                  />
+                  <button onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70">
+                    {showPw ? <EyeOff size={14}/> : <Eye size={14}/>}
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => handleLogin()}
+                disabled={loading}
+                className="w-full bg-[#FF9933] hover:bg-[#FF9933]/90 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              >
+                {loading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/> : <LogIn size={16}/>}
+                {loading ? 'Signing in…' : 'Sign In'}
+              </button>
+            </div>
+          </div>
+
+          {/* Demo accounts */}
+          <div className="mt-5 bg-white/3 border border-white/10 rounded-xl p-4">
+            <p className="text-blue-200/50 text-xs mb-3 text-center uppercase tracking-wider">Demo Accounts</p>
+            <div className="space-y-1.5">
+              {DEMO_CREDS.map(c => (
+                <button
+                  key={c.username}
+                  onClick={() => handleLogin(c.username, c.password)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-sm group"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-white/70">{c.username}</span>
+                    <span className="text-white/30">/</span>
+                    <span className="font-mono text-white/50">{c.password}</span>
+                  </div>
+                  <span className={`text-xs ${c.color}`}>{c.role}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <div className="text-center py-4 text-white/20 text-xs border-t border-white/5">
+        © 2025 Ministry of Statistics &amp; Programme Implementation, Government of India · SATARK v2.0
+      </div>
     </div>
-  );
-};
+  )
+}
