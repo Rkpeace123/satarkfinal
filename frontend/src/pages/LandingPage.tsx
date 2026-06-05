@@ -108,6 +108,13 @@ export default function LandingPage() {
           }}
         />
 
+        {/* GoI branding bar */}
+        <div className="relative z-10 bg-[#002366] border-b-4 border-[#FF9933] px-8 py-2 flex items-center gap-3">
+          <span className="text-[#FF9933] text-lg">☸</span>
+          <span className="text-white font-bold text-xs tracking-wide">Government of India · Ministry of Statistics &amp; Programme Implementation</span>
+          <span className="text-[#FF9933] text-xs ml-1">· MoSPI · NSO</span>
+        </div>
+
         {/* Top nav */}
         <div className="relative z-10 flex items-center justify-between px-8 py-5 border-b border-slate-800">
           <div className="flex items-center gap-3">
@@ -119,9 +126,20 @@ export default function LandingPage() {
               <span className="text-slate-500 text-xs ml-2">v2.0</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            System Online
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              System Online
+            </div>
+            {user && (
+              <button
+                onClick={() => { clearAuth(); navigate('/login') }}
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                <LogOut size={12} />
+                Sign out
+              </button>
+            )}
           </div>
         </div>
 

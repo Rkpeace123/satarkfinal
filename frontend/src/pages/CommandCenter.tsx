@@ -9,10 +9,12 @@ import {
   Code,
   TrendingUp,
   TrendingDown,
-  RefreshCw
+  RefreshCw,
+  LogOut
 } from 'lucide-react'
 import type { EnumeratorProfile, Stats } from '../types'
 import { api } from '../api/client'
+import { getUser, clearAuth } from '../api/auth'
 import FlagFeed from '../components/FlagFeed'
 import EnumeratorRoster from '../components/EnumeratorRoster'
 import clsx from 'clsx'
@@ -46,6 +48,7 @@ function StatCard({
 
 export default function CommandCenter() {
   const navigate = useNavigate()
+  const user = getUser()
   const [activeTab, setActiveTab] = useState<Tab>('live')
   const [stats, setStats] = useState<Stats | null>(null)
   const [statsLoading, setStatsLoading] = useState(true)
@@ -71,6 +74,12 @@ export default function CommandCenter() {
 
   return (
     <div className="min-h-screen bg-slate-900 pt-12 flex flex-col">
+      {/* GoI branding strip */}
+      <div className="bg-[#002366] border-b-4 border-[#FF9933] px-6 py-2 flex items-center gap-3">
+        <span className="text-[#FF9933]">☸</span>
+        <span className="text-white font-bold text-xs tracking-wide">Government of India · Ministry of Statistics &amp; Programme Implementation</span>
+        <span className="text-[#FF9933] text-xs ml-1">· MoSPI · NSO</span>
+      </div>
       {/* Header */}
       <div className="bg-slate-800/50 border-b border-slate-700 px-6 py-4">
         <div className="flex items-center justify-between max-w-screen-2xl mx-auto">
@@ -84,6 +93,9 @@ export default function CommandCenter() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {user && (
+              <span className="text-slate-400 text-xs">{user.name}</span>
+            )}
             <button
               onClick={() => {
                 setStatsLoading(true)
@@ -106,6 +118,13 @@ export default function CommandCenter() {
                   {stats.pendingCodingReview}
                 </span>
               ) : null}
+            </button>
+            <button
+              onClick={() => { clearAuth(); navigate('/login') }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs transition-colors"
+            >
+              <LogOut size={12} />
+              Sign out
             </button>
           </div>
         </div>

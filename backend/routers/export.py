@@ -55,24 +55,32 @@ def export_responses(
         rows.append(row)
 
     if format == "json":
-        content = json.dumps(rows, indent=2, default=str)
+        content = json.dumps(rows, indent=2, default=str).encode("utf-8")
         return StreamingResponse(
-            io.StringIO(content),
+            iter([content]),
             media_type="application/json",
             headers={"Content-Disposition": "attachment; filename=satark_export.json"}
         )
 
-    # CSV
+    # CSV — collect all fieldnames across all rows first to handle variable answer keys
     if not rows:
-        return StreamingResponse(io.StringIO("no data"), media_type="text/csv")
+        return StreamingResponse(iter([b"no data"]), media_type="text/csv")
+
+    all_fields: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for k in row.keys():
+            if k not in seen:
+                all_fields.append(k)
+                seen.add(k)
 
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=rows[0].keys())
+    writer = csv.DictWriter(output, fieldnames=all_fields, extrasaction="ignore")
     writer.writeheader()
     writer.writerows(rows)
-    output.seek(0)
+    csv_bytes = output.getvalue().encode("utf-8")
     return StreamingResponse(
-        output,
+        iter([csv_bytes]),
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=satark_export.csv"}
     )
